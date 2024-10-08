@@ -8,9 +8,11 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
-
+        <div id="app">
     <header class="bg-blue-600 text-white p-4">
         <h1 class="text-2xl">ようこそ！</h1>
         <nav>
@@ -23,12 +25,62 @@
 
     <main class="p-6">
         <h2 class="text-xl mb-4">コンテンツセクション</h2>
-        <p>ここにコンテンツを追加します。</p>
+        <p>
+            <div class="relative bg-white border border-gray-300 rounded-lg shadow-md p-6 max-w-md mx-auto">
+                <p class="text-gray-800">{{ message }}</p>
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 border-l-12 border-l-transparent border-r-12 border-r-transparent border-b-12 border-b-white"></div>
+            </div>
+            説明
+        </p>
     </main>
 
     <footer class="bg-gray-800 text-white p-4 text-center">
         <p>&copy; 2024 サンプルサイト</p>
     </footer>
+        </div>
+    <script>
+        const { createApp, ref } = Vue
+      
+        createApp({
+            setup() {
 
+            const url = 'https://tdev-denowebsocket.deno.dev/api/ws/wsapi/users/pjnavi/tanto_month?TANTO_CD=1248&YM=202409';
+                (async () => {
+
+                    
+                    try {
+
+
+                        const response = await fetch(url);
+                    
+                        // レスポンスが成功したか確認
+                        if (!response.ok) {
+                            throw new Error(`HTTPエラー: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        console.log(data); // コンソールにデータを出力
+
+                        //データを表示する
+                        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+
+                    } catch (error) {
+                        console.error('データ取得エラー:', error);
+                        document.getElementById('output').textContent = 'データ取得エラー';
+                    }
+
+                })();
+
+
+
+            const message = ref('Hello vue!')
+            return {
+              message
+            }
+          }
+        }).mount('#app')
+
+
+    </script>
 </body>
 </html>
