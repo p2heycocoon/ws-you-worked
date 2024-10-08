@@ -27,7 +27,7 @@
         <h2 class="text-xl mb-4">コンテンツセクション</h2>
         <p>
             <div class="relative bg-white border border-gray-300 rounded-lg shadow-md p-6 max-w-md mx-auto">
-                <p class="text-gray-800">{{ message }}</p>
+                <p class="text-gray-800" id="output"></p>
                 <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 border-l-12 border-l-transparent border-r-12 border-r-transparent border-b-12 border-b-white"></div>
             </div>
             説明
@@ -40,11 +40,23 @@
         </div>
     <script>
         const { createApp, ref } = Vue
+        
+        function getParam(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
       
         createApp({
             setup() {
 
-            const url = 'https://tdev-denowebsocket.deno.dev/api/ws/wsapi/users/pjnavi/tanto_month?TANTO_CD=1248&YM=202409';
+            const message = ref('Hello vue!');
+
+            const url = 'https://tdev-denowebsocket.deno.dev/api/ws/wsapi/users/pjnavi/tanto_month' + location.search;
                 (async () => {
 
                     
@@ -60,9 +72,11 @@
 
                         const data = await response.json();
                         console.log(data); // コンソールにデータを出力
-
+                        console.log(data.data[0][0].SUM_KOSU);
                         //データを表示する
-                        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+                        
+                        document.getElementById('output').textContent = getParam('TANTO_CD') + ' さんは ' + getParam('YM') + ' に ' + data.data[0][0].SUM_KOSU + ' h稼働しました。';
+                        
 
                     } catch (error) {
                         console.error('データ取得エラー:', error);
@@ -71,9 +85,6 @@
 
                 })();
 
-
-
-            const message = ref('Hello vue!')
             return {
               message
             }
